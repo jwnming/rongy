@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cd.dao.TopicClsMapper" >
+  <resultMap id="BaseResultMap" type="com.cd.entity.TopicCls" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="BIG_TYPE" property="bigType" jdbcType="CHAR" />
+    <result column="TITLE" property="title" jdbcType="VARCHAR" />
+    <result column="IMAGE_URL" property="imageUrl" jdbcType="VARCHAR" />
+    <result column="VADIO_URL" property="vadioUrl" jdbcType="VARCHAR" />
+    <result column="CONTENT" property="content" jdbcType="VARCHAR" />
+    <result column="CREATED_TIME" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATED_TIME" property="updatedTime" jdbcType="TIMESTAMP" />
+    <result column="VIEW_COUNT" property="viewCount" jdbcType="INTEGER" />
+    <result column="JOIN_VIEW" property="joinView" jdbcType="INTEGER" />
+    <result column="CREATE_BY" property="createBy" jdbcType="VARCHAR" />
+    <result column="SMALL_TYPE" property="smallType" jdbcType="CHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, BIG_TYPE, TITLE, IMAGE_URL, VADIO_URL, CONTENT, CREATED_TIME, UPDATED_TIME, VIEW_COUNT, CREATE_BY, SMALL_TYPE
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from topic_cls
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="queryTopics" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from topic_cls
+    order by CREATED_TIME desc
+  </select>
+  <select id="getTopicsByCondition" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from topic_cls
+    <where>
+      <if test="bigType != null" >
+        and BIG_TYPE = #{bigType,jdbcType=CHAR}
+      </if>
+      <if test="smallType != null" >
+        and SMALL_TYPE = #{smallType,jdbcType=CHAR}
+      </if>
+      <if test="createBy != null" >
+        and CREATE_BY = #{createBy,jdbcType=VARCHAR}
+      </if>
+    </where>
+    order by CREATED_TIME desc
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from topic_cls
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cd.entity.TopicCls" >
+    insert into topic_cls (id, BIG_TYPE, TITLE, 
+      IMAGE_URL, VADIO_URL, CONTENT, 
+      CREATED_TIME, UPDATED_TIME)
+    values (#{id,jdbcType=INTEGER}, #{bigType,jdbcType=CHAR}, #{title,jdbcType=VARCHAR}, 
+      #{imageUrl,jdbcType=VARCHAR}, #{vadioUrl,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, 
+      #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cd.entity.TopicCls" >
+    insert into topic_cls
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="bigType != null" >
+        BIG_TYPE,
+      </if>
+      <if test="title != null" >
+        TITLE,
+      </if>
+      <if test="imageUrl != null" >
+        IMAGE_URL,
+      </if>
+      <if test="vadioUrl != null" >
+        VADIO_URL,
+      </if>
+      <if test="content != null" >
+        CONTENT,
+      </if>
+      <if test="createdTime != null" >
+        CREATED_TIME,
+      </if>
+      <if test="updatedTime != null" >
+        UPDATED_TIME,
+      </if>
+      <if test="smallType != null" >
+        SMALL_TYPE,
+      </if>
+      <if test="createBy != null" >
+        CREATE_BY,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="bigType != null" >
+        #{bigType,jdbcType=CHAR},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="vadioUrl != null" >
+        #{vadioUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null" >
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedTime != null" >
+        #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="smallType != null" >
+        #{smallType,jdbcType=CHAR},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cd.entity.TopicCls" >
+    update topic_cls
+    <set >
+      <if test="bigType != null" >
+        BIG_TYPE = #{bigType,jdbcType=CHAR},
+      </if>
+      <if test="title != null" >
+        TITLE = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        IMAGE_URL = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="vadioUrl != null" >
+        VADIO_URL = #{vadioUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        CONTENT = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null" >
+        CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedTime != null" >
+        UPDATED_TIME = #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cd.entity.TopicCls" >
+    update topic_cls
+    set BIG_TYPE = #{bigType,jdbcType=CHAR},
+      TITLE = #{title,jdbcType=VARCHAR},
+      IMAGE_URL = #{imageUrl,jdbcType=VARCHAR},
+      VADIO_URL = #{vadioUrl,jdbcType=VARCHAR},
+      CONTENT = #{content,jdbcType=VARCHAR},
+      CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+      UPDATED_TIME = #{updatedTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <!-- 访问量+1 -->
+  <update id="viewCountAdd" parameterType="java.lang.Integer" >
+    update topic_cls
+    set VIEW_COUNT = VIEW_COUNT + 1
+    where ID = #{topicId, jdbcType=INTEGER}
+  </update>
+
+  <select id="selectByUserNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+        <include refid="Base_Column_List" />
+    from topic_cls where id in (
+        select DISTINCT(a.id) from topic_cls a
+        LEFT JOIN topic_article_rel b on a.id = b.topic_cls_id
+        LEFT JOIN article c on b.info_id = c.id
+        <where>
+          c.CREATED_BY = #{userNo}
+          <if test="smallType != null">
+            and a.SMALL_TYPE = #{smallType}
+          </if>
+        </where>
+
+        union all
+
+        select DISTINCT(a.id) from topic_cls a
+        LEFT JOIN topic_article_rel b on a.id = b.topic_cls_id
+        LEFT JOIN market_goods_info c on b.info_id = c.id
+        <where>
+          c.CREATED_BY = #{userNo}
+          <if test="smallType != null">
+            and a.SMALL_TYPE = #{smallType}
+          </if>
+        </where>
+    )
+
+  </select>
+
+
+</mapper>

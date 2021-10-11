@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cd.dao.TopicMapper">
+  <resultMap id="BaseResultMap" type="com.cd.entity.Topic">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="CIRCLE_ID" jdbcType="INTEGER" property="circleId" />
+    <result column="TITLE" jdbcType="VARCHAR" property="title" />
+    <result column="TYPE_NO" jdbcType="VARCHAR" property="typeNo" />
+    <result column="IMAGE_URL" jdbcType="VARCHAR" property="imageUrl" />
+    <result column="VIDEO_URL" jdbcType="VARCHAR" property="videoUrl" />
+    <result column="STATUS" jdbcType="CHAR" property="status" />
+    <result column="CREATED_BY" jdbcType="VARCHAR" property="createdBy" />
+    <result column="CREATED_TIME" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="UPDATED_TIME" jdbcType="TIMESTAMP" property="updatedTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.cd.entity.Topic">
+    <result column="CONTENT" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, CIRCLE_ID, TITLE, TYPE_NO, IMAGE_URL, VIDEO_URL, STATUS, CREATED_BY, CREATED_TIME, 
+    UPDATED_TIME
+  </sql>
+  <sql id="Blob_Column_List">
+    CONTENT
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from topic
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from topic
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cd.entity.Topic">
+    insert into topic (ID, CIRCLE_ID, TITLE, 
+      TYPE_NO, IMAGE_URL, VIDEO_URL, 
+      STATUS, CREATED_BY, CREATED_TIME, 
+      UPDATED_TIME, CONTENT)
+    values (#{id,jdbcType=INTEGER}, #{circleId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, 
+      #{typeNo,jdbcType=VARCHAR}, #{imageUrl,jdbcType=VARCHAR}, #{videoUrl,jdbcType=VARCHAR}, 
+      #{status,jdbcType=CHAR}, #{createdBy,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, 
+      #{updatedTime,jdbcType=TIMESTAMP}, #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cd.entity.Topic">
+    insert into topic
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="circleId != null">
+        CIRCLE_ID,
+      </if>
+      <if test="title != null">
+        TITLE,
+      </if>
+      <if test="typeNo != null">
+        TYPE_NO,
+      </if>
+      <if test="imageUrl != null">
+        IMAGE_URL,
+      </if>
+      <if test="videoUrl != null">
+        VIDEO_URL,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="createdBy != null">
+        CREATED_BY,
+      </if>
+      <if test="createdTime != null">
+        CREATED_TIME,
+      </if>
+      <if test="updatedTime != null">
+        UPDATED_TIME,
+      </if>
+      <if test="content != null">
+        CONTENT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="circleId != null">
+        #{circleId,jdbcType=INTEGER},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="typeNo != null">
+        #{typeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null">
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="videoUrl != null">
+        #{videoUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=CHAR},
+      </if>
+      <if test="createdBy != null">
+        #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedTime != null">
+        #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cd.entity.Topic">
+    update topic
+    <set>
+      <if test="circleId != null">
+        CIRCLE_ID = #{circleId,jdbcType=INTEGER},
+      </if>
+      <if test="title != null">
+        TITLE = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="typeNo != null">
+        TYPE_NO = #{typeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null">
+        IMAGE_URL = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="videoUrl != null">
+        VIDEO_URL = #{videoUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=CHAR},
+      </if>
+      <if test="createdBy != null">
+        CREATED_BY = #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null">
+        CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedTime != null">
+        UPDATED_TIME = #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="content != null">
+        CONTENT = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.cd.entity.Topic">
+    update topic
+    set CIRCLE_ID = #{circleId,jdbcType=INTEGER},
+      TITLE = #{title,jdbcType=VARCHAR},
+      TYPE_NO = #{typeNo,jdbcType=VARCHAR},
+      IMAGE_URL = #{imageUrl,jdbcType=VARCHAR},
+      VIDEO_URL = #{videoUrl,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=CHAR},
+      CREATED_BY = #{createdBy,jdbcType=VARCHAR},
+      CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+      UPDATED_TIME = #{updatedTime,jdbcType=TIMESTAMP},
+      CONTENT = #{content,jdbcType=LONGVARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cd.entity.Topic">
+    update topic
+    set CIRCLE_ID = #{circleId,jdbcType=INTEGER},
+      TITLE = #{title,jdbcType=VARCHAR},
+      TYPE_NO = #{typeNo,jdbcType=VARCHAR},
+      IMAGE_URL = #{imageUrl,jdbcType=VARCHAR},
+      VIDEO_URL = #{videoUrl,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=CHAR},
+      CREATED_BY = #{createdBy,jdbcType=VARCHAR},
+      CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+      UPDATED_TIME = #{updatedTime,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cd.dao.UserInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.cd.entity.UserInfo" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="USER_NO" property="userNo" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="WECHAT_NAME" property="wechatName" jdbcType="VARCHAR" />
+    <result column="SEX" property="sex" jdbcType="CHAR" />
+    <result column="BIRTHDAY" property="birthday" jdbcType="CHAR" />
+    <result column="TELEPHONE" property="telephone" jdbcType="VARCHAR" />
+    <result column="INTRODUCTION" property="introduction" jdbcType="VARCHAR" />
+    <result column="IMAGE_URL" property="imageUrl" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="CHAR" />
+    <result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+    <result column="CREATED_TIME" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATED_TIME" property="updatedTime" jdbcType="TIMESTAMP" />
+    <result column="OPEN_ID" property="openId" jdbcType="VARCHAR" />
+    <result column="ROLE_ID" property="roleId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, USER_NO, NAME, WECHAT_NAME, SEX, BIRTHDAY, TELEPHONE, INTRODUCTION, IMAGE_URL, 
+    STATUS, ADDRESS, CREATED_TIME, UPDATED_TIME, OPEN_ID, ROLE_ID
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from user_info
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+
+  <!-- 根据用户编号查询 -->
+  <select id="selectByUserNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from user_info
+    where USER_NO = #{userNo,jdbcType=VARCHAR}
+  </select>
+  <!-- 根据圈子id查询用户 -->
+  <select id="selectByCircleId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select u.ID, u.USER_NO, u.NAME, u.WECHAT_NAME, u.SEX, u.BIRTHDAY, u.TELEPHONE, u.INTRODUCTION, u.IMAGE_URL,
+      u.STATUS, u.ADDRESS, u.CREATED_TIME, u.UPDATED_TIME
+    from user_circle_rel uc LEFT JOIN user_info u on uc.USER_ID = u.ID
+    where uc.CIRCLE_ID = #{circleId,jdbcType=INTEGER}
+  </select>
+  <!-- 查询所有 -->
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from user_info where name &lt;> 'test'
+  </select>
+  <!-- 根据字段模糊匹配用户 -->
+  <select id="selectByNameLike" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+    from user_info where name like '%${nameLike,jdbcType=VARCHAR}%'
+  </select>
+
+  <!-- 根据用户编号修改用户信息 -->
+  <update id="updateByUserNoSelective" parameterType="com.cd.entity.UserInfo" >
+    update user_info
+    <set >
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="wechatName != null" >
+        WECHAT_NAME = #{wechatName,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        SEX = #{sex,jdbcType=CHAR},
+      </if>
+      <if test="birthday != null" >
+        BIRTHDAY = #{birthday,jdbcType=CHAR},
+      </if>
+      <if test="telephone != null" >
+        TELEPHONE = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="introduction != null" >
+        INTRODUCTION = #{introduction,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        IMAGE_URL = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=CHAR},
+      </if>
+      <if test="address != null" >
+        ADDRESS = #{address,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where USER_NO = #{userNo,jdbcType=VARCHAR}
+  </update>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from user_info
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cd.entity.UserInfo" >
+    insert into user_info (ID, USER_NO, NAME, 
+      WECHAT_NAME, SEX, BIRTHDAY, 
+      TELEPHONE, INTRODUCTION, IMAGE_URL, 
+      STATUS, ADDRESS, CREATED_TIME, 
+      UPDATED_TIME, OPEN_ID, ROLE_ID)
+    values (#{id,jdbcType=INTEGER}, #{userNo,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{wechatName,jdbcType=VARCHAR}, #{sex,jdbcType=CHAR}, #{birthday,jdbcType=CHAR}, 
+      #{telephone,jdbcType=VARCHAR}, #{introduction,jdbcType=VARCHAR}, #{imageUrl,jdbcType=VARCHAR}, 
+      #{status,jdbcType=CHAR}, #{address,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, 
+      #{updatedTime,jdbcType=TIMESTAMP}, #{openId,jdbcType=VARCHAR}, #{roleId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cd.entity.UserInfo" >
+    insert into user_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="userNo != null" >
+        USER_NO,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+      <if test="wechatName != null" >
+        WECHAT_NAME,
+      </if>
+      <if test="sex != null" >
+        SEX,
+      </if>
+      <if test="birthday != null" >
+        BIRTHDAY,
+      </if>
+      <if test="telephone != null" >
+        TELEPHONE,
+      </if>
+      <if test="introduction != null" >
+        INTRODUCTION,
+      </if>
+      <if test="imageUrl != null" >
+        IMAGE_URL,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="address != null" >
+        ADDRESS,
+      </if>
+      <if test="createdTime != null" >
+        CREATED_TIME,
+      </if>
+      <if test="updatedTime != null" >
+        UPDATED_TIME,
+      </if>
+      <if test="openId != null" >
+        OPEN_ID,
+      </if>
+      <if test="roleId != null" >
+        ROLE_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userNo != null" >
+        #{userNo,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="wechatName != null" >
+        #{wechatName,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=CHAR},
+      </if>
+      <if test="birthday != null" >
+        #{birthday,jdbcType=CHAR},
+      </if>
+      <if test="telephone != null" >
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="introduction != null" >
+        #{introduction,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=CHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null" >
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedTime != null" >
+        #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="openId != null" >
+        #{openId,jdbcType=VARCHAR},
+      </if>
+      <if test="roleId != null" >
+        #{roleId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cd.entity.UserInfo" >
+    update user_info
+    <set >
+      <if test="userNo != null" >
+        USER_NO = #{userNo,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="wechatName != null" >
+        WECHAT_NAME = #{wechatName,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        SEX = #{sex,jdbcType=CHAR},
+      </if>
+      <if test="birthday != null" >
+        BIRTHDAY = #{birthday,jdbcType=CHAR},
+      </if>
+      <if test="telephone != null" >
+        TELEPHONE = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="introduction != null" >
+        INTRODUCTION = #{introduction,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        IMAGE_URL = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=CHAR},
+      </if>
+      <if test="address != null" >
+        ADDRESS = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null" >
+        CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedTime != null" >
+        UPDATED_TIME = #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="roleId != null" >
+        ROLE_ID = #{roleId,jdbcType=VARCHAR},
+      </if>
+      <if test="openId != null" >
+        OPEN_ID = #{openId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cd.entity.UserInfo" >
+    update user_info
+    set USER_NO = #{userNo,jdbcType=VARCHAR},
+      NAME = #{name,jdbcType=VARCHAR},
+      WECHAT_NAME = #{wechatName,jdbcType=VARCHAR},
+      SEX = #{sex,jdbcType=CHAR},
+      BIRTHDAY = #{birthday,jdbcType=CHAR},
+      TELEPHONE = #{telephone,jdbcType=VARCHAR},
+      INTRODUCTION = #{introduction,jdbcType=VARCHAR},
+      IMAGE_URL = #{imageUrl,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=CHAR},
+      ADDRESS = #{address,jdbcType=VARCHAR},
+      CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+      UPDATED_TIME = #{updatedTime,jdbcType=TIMESTAMP},
+      OPEN_ID = #{openId,jdbcType=VARCHAR},
+      ROLE_ID = #{roleId,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="getByUserInfo" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user_info
+    where userNo = #{userNo,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByOpenId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user_info
+    where
+    OPEN_ID = #{openId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByActivityId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select
+    a.*
+    from user_info a left join team_activity_rel_user_info b on a.ID = b.USER_INFO_ID
+    where
+    b.TEAM_ACTIVITY_ID = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByNameAndPhone" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+        <include refid="Base_Column_List" />
+    from user_info
+    where
+        `NAME` = #{name,jdbcType=VARCHAR} and TELEPHONE = #{phone,jdbcType=VARCHAR}
+  </select>
+
+
+
+</mapper>

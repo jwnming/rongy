@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cd.dao.UserRelationshipMapper" >
+  <resultMap id="BaseResultMap" type="com.cd.entity.UserRelationship" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+    <result column="FOLLOWED_USER_ID" property="followedUserId" jdbcType="VARCHAR" />
+    <result column="CREATED_TIME" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATED_TIME" property="updatedTime" jdbcType="TIMESTAMP" />
+    <result column="userNo" property="userNo" jdbcType="VARCHAR" />
+    <result column="followedUserNo" property="followedUserNo" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <resultMap id="UserRelationshipVOMap" type="com.cd.entity.vo.UserRelationshipVO">
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="INTRODUCTION" property="introduction" jdbcType="VARCHAR" />
+    <result column="IMAGE_URL" property="imageUrl" jdbcType="VARCHAR" />
+    <result column="USER_NO" property="userNo" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="statusToMe" property="statusToMe" jdbcType="VARCHAR" />
+    <result column="CREATED_TIME" property="time" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    ID, USER_ID, FOLLOWED_USER_ID, CREATED_TIME, UPDATED_TIME
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from user_relationship
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <!-- 根据用户id及关注人id查询 -->
+  <select id="selectByBothId" parameterType="java.lang.String" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from user_relationship
+    where USER_ID = #{userId,jdbcType=VARCHAR} and FOLLOWED_USER_ID = #{followedUserId,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from user_relationship
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <!-- 根据用户id及关注人id删除 -->
+  <delete id="deleteByBothId" parameterType="java.lang.String" >
+    delete from user_relationship
+    where USER_ID = #{userId,jdbcType=VARCHAR} and FOLLOWED_USER_ID = #{followedUserId,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insert" parameterType="com.cd.entity.UserRelationship" >
+    insert into user_relationship (ID, USER_ID, FOLLOWED_USER_ID, 
+      CREATED_TIME, UPDATED_TIME)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=VARCHAR}, #{followedUserId,jdbcType=VARCHAR}, 
+      #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cd.entity.UserRelationship" >
+    insert into user_relationship
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="followedUserId != null" >
+        FOLLOWED_USER_ID,
+      </if>
+      <if test="createdTime != null" >
+        CREATED_TIME,
+      </if>
+      <if test="updatedTime != null" >
+        UPDATED_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="followedUserId != null" >
+        #{followedUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null" >
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedTime != null" >
+        #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cd.entity.UserRelationship" >
+    update user_relationship
+    <set >
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="followedUserId != null" >
+        FOLLOWED_USER_ID = #{followedUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null" >
+        CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedTime != null" >
+        UPDATED_TIME = #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cd.entity.UserRelationship" >
+    update user_relationship
+    set USER_ID = #{userId,jdbcType=VARCHAR},
+      FOLLOWED_USER_ID = #{followedUserId,jdbcType=VARCHAR},
+      CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+      UPDATED_TIME = #{updatedTime,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectFollowerVOByUserNoAndFromDate" parameterType="java.lang.String" resultMap="UserRelationshipVOMap">
+    select
+        IMAGE_URL, `NAME`, INTRODUCTION, USER_NO, '1' as statusToMe, ur.CREATED_TIME
+    from user_info
+    left join user_relationship ur on ur.FOLLOWED_USER_ID = USER_NO
+    where ur.USER_ID = #{userNo,jdbcType=VARCHAR}
+    <if test="fromDate!=null and fromDate!=''">
+      and ur.CREATED_TIME > #{fromDate,jdbcType=TIMESTAMP}
+    </if>
+    ORDER BY ur.CREATED_TIME DESC
+  </select>
+
+  <select id="selectFollowingVOByUserNo" parameterType="java.lang.String" resultMap="UserRelationshipVOMap">
+    select
+        IMAGE_URL, `NAME`, INTRODUCTION, USER_NO, '1' as status, ur.CREATED_TIME
+    from user_info
+    left join user_relationship ur on ur.USER_ID = USER_NO
+    where ur.FOLLOWED_USER_ID = #{userNo,jdbcType=VARCHAR}
+    ORDER BY ur.CREATED_TIME DESC
+  </select>
+  
+  <select id="selectFollowerByUserNo" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user_relationship
+    where USER_ID = #{userNo,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectFollowingByUserNo" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user_relationship
+    where FOLLOWED_USER_ID = #{userNo,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByUserNo" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user_relationship
+    where FOLLOWED_USER_ID = #{userNo,jdbcType=VARCHAR} or USER_ID = #{userNo,jdbcType=VARCHAR}
+  </select>
+</mapper>

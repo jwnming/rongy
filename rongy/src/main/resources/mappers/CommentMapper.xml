@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cd.dao.CommentMapper" >
+  <resultMap id="BaseResultMap" type="com.cd.entity.Comment" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="ARTICLE_ID" property="articleId" jdbcType="VARCHAR" />
+    <result column="CONTENT" property="content" jdbcType="VARCHAR" />
+    <result column="TYPE" property="type" jdbcType="CHAR" />
+    <result column="BECOMMENTEE_ID" property="becommenteeId" jdbcType="VARCHAR" />
+    <result column="COMMENTATOR_ID" property="commentatorId" jdbcType="VARCHAR" />
+    <result column="LEVEL" property="level" jdbcType="CHAR" />
+    <result column="IS_READ" property="isRead" jdbcType="CHAR" />
+    <result column="CREATED_TIME" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATED_TIME" property="updatedTime" jdbcType="TIMESTAMP" />
+    <result column="becommentee_name" property="becommenteeName" jdbcType="VARCHAR" />
+    <result column="commentator_name" property="commentatorName" jdbcType="VARCHAR" />
+    <result column="commentator_avatar" property="commentatorAvatar" jdbcType="VARCHAR" />
+    <result column="time" property="time" jdbcType="VARCHAR" />
+    <result column="TARGET_ID" property="targetId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, ARTICLE_ID, CONTENT, TYPE, BECOMMENTEE_ID, COMMENTATOR_ID, LEVEL, IS_READ, CREATED_TIME, 
+    UPDATED_TIME, TARGET_ID
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from comment
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+
+  <!-- 根据用户微信号查询 -->
+  <select id="selectByWechatName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select u1.`NAME` as becommentee_name, u2.`NAME` as commentator_name, c.CREATED_TIME as time,
+        c.ID, c.ARTICLE_ID, c.CONTENT, c.TYPE, c.BECOMMENTEE_ID, c.COMMENTATOR_ID, c.LEVEL, c.IS_READ,
+        c.CREATED_TIME, c.UPDATED_TIME, c.TARGET_ID
+      from user_info u1
+      LEFT JOIN `comment` c on u1.id = c.BECOMMENTEE_ID
+      LEFT JOIN user_info u2 on c.COMMENTATOR_ID = u2.ID
+    where c.ID is not null and u1.WECHAT_NAME = #{wechatName,jdbcType=VARCHAR}
+    ORDER BY c.CREATED_TIME DESC
+  </select>
+  <!-- 根据用户id查询 -->
+  <select id="selectByUserNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select u1.`NAME` as becommentee_name, u2.`NAME` as commentator_name, u2.`IMAGE_URL` as commentator_avatar,
+        c.CREATED_TIME as time, c.ID, c.ARTICLE_ID, c.CONTENT, c.TYPE, c.BECOMMENTEE_ID, c.COMMENTATOR_ID,
+        c.LEVEL, c.IS_READ, c.CREATED_TIME, c.UPDATED_TIME, c.TARGET_ID
+    from `comment` c
+    INNER JOIN user_info u1
+        on u1.USER_NO = c.BECOMMENTEE_ID
+    INNER JOIN user_info u2
+        on c.COMMENTATOR_ID = u2.USER_NO
+    where
+        c.BECOMMENTEE_ID = #{userNo,jdbcType=VARCHAR} and c.COMMENTATOR_ID != #{userNo,jdbcType=VARCHAR}
+    ORDER BY c.CREATED_TIME DESC
+  </select>
+  <!-- 根据帖子id和评论人id查询 -->
+  <select id="selectByArticleIdAndUserId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+   select u1.`NAME` as becommentee_name, u2.`NAME` as commentator_name, c.CREATED_TIME as time,
+        c.ID, c.ARTICLE_ID, c.CONTENT, c.TYPE, c.BECOMMENTEE_ID, c.COMMENTATOR_ID, c.LEVEL, c.IS_READ,
+        c.CREATED_TIME, c.UPDATED_TIME, c.TARGET_ID
+      from user_info u1
+      LEFT JOIN `comment` c on u1.id = c.BECOMMENTEE_ID
+      LEFT JOIN user_info u2 on c.COMMENTATOR_ID = u2.ID
+    where c.ID is not null and c.ARTICLE_ID = #{articleId,jdbcType=VARCHAR} and c.COMMENTATOR_ID = #{commentatorId,jdbcType=VARCHAR}
+  </select>
+  <!-- 查询喜欢的人数 -->
+  <select id="selectLikeCountByArticleId" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    select count(0)
+    from comment
+    where ARTICLE_ID = #{articleId,jdbcType=VARCHAR} and TYPE = '0'
+  </select>
+  <!-- 根据帖子id查询 -->
+  <select id="selectByArticleId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+   select c.ID, u1.`NAME` as becommentee_name, u2.`NAME` as commentator_name, c.CREATED_TIME as time,
+        c.ID, c.ARTICLE_ID, c.CONTENT, c.TYPE, c.BECOMMENTEE_ID, c.COMMENTATOR_ID, c.LEVEL, c.IS_READ,
+        c.CREATED_TIME, c.UPDATED_TIME, u2.IMAGE_URL as commentator_avatar, c.TARGET_ID
+      from user_info u1
+      LEFT JOIN `comment` c on u1.USER_NO = c.BECOMMENTEE_ID
+      LEFT JOIN user_info u2 on c.COMMENTATOR_ID = u2.USER_NO
+    where c.ID is not null and c.ARTICLE_ID = #{articleId,jdbcType=VARCHAR}
+    order by c.CREATED_TIME ASC
+  </select>
+
+  <!-- 根据帖子id,评论人id，类型为0 查询 -->
+  <select id="selectIsLike" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from comment
+    where ARTICLE_ID = #{articleId,jdbcType=VARCHAR}
+      AND COMMENTATOR_ID = #{commentatorUserNo,jdbcType=VARCHAR}
+      AND TYPE = '0'
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from comment
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cd.entity.Comment" >
+    insert into comment (ID, ARTICLE_ID, CONTENT, 
+      TYPE, BECOMMENTEE_ID, COMMENTATOR_ID, 
+      LEVEL, IS_READ, CREATED_TIME, 
+      UPDATED_TIME)
+    values (#{id,jdbcType=INTEGER}, #{articleId,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, 
+      #{type,jdbcType=CHAR}, #{becommenteeId,jdbcType=VARCHAR}, #{commentatorId,jdbcType=VARCHAR}, 
+      #{level,jdbcType=CHAR}, #{isRead,jdbcType=CHAR}, #{createdTime,jdbcType=TIMESTAMP}, 
+      #{updatedTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cd.entity.Comment" keyProperty="id"
+          keyColumn="ID" useGeneratedKeys="true">
+    insert into comment
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="articleId != null" >
+        ARTICLE_ID,
+      </if>
+      <if test="content != null" >
+        CONTENT,
+      </if>
+      <if test="type != null" >
+        TYPE,
+      </if>
+      <if test="becommenteeId != null" >
+        BECOMMENTEE_ID,
+      </if>
+      <if test="commentatorId != null" >
+        COMMENTATOR_ID,
+      </if>
+      <if test="level != null" >
+        LEVEL,
+      </if>
+      <if test="isRead != null" >
+        IS_READ,
+      </if>
+      <if test="createdTime != null" >
+        CREATED_TIME,
+      </if>
+      <if test="updatedTime != null" >
+        UPDATED_TIME,
+      </if>
+      <if test="targetId != null">
+        TARGET_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="articleId != null" >
+        #{articleId,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=CHAR},
+      </if>
+      <if test="becommenteeId != null" >
+        #{becommenteeId,jdbcType=VARCHAR},
+      </if>
+      <if test="commentatorId != null" >
+        #{commentatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null" >
+        #{level,jdbcType=CHAR},
+      </if>
+      <if test="isRead != null" >
+        #{isRead,jdbcType=CHAR},
+      </if>
+      <if test="createdTime != null" >
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedTime != null" >
+        #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="targetId != null">
+        #{targetId,jdbcType=INTEGER}
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cd.entity.Comment" >
+    update comment
+    <set >
+      <if test="articleId != null" >
+        ARTICLE_ID = #{articleId,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        CONTENT = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        TYPE = #{type,jdbcType=CHAR},
+      </if>
+      <if test="becommenteeId != null" >
+        BECOMMENTEE_ID = #{becommenteeId,jdbcType=VARCHAR},
+      </if>
+      <if test="commentatorId != null" >
+        COMMENTATOR_ID = #{commentatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null" >
+        LEVEL = #{level,jdbcType=CHAR},
+      </if>
+      <if test="isRead != null" >
+        IS_READ = #{isRead,jdbcType=CHAR},
+      </if>
+      <if test="createdTime != null" >
+        CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedTime != null" >
+        UPDATED_TIME = #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cd.entity.Comment" >
+    update comment
+    set ARTICLE_ID = #{articleId,jdbcType=VARCHAR},
+      CONTENT = #{content,jdbcType=VARCHAR},
+      TYPE = #{type,jdbcType=CHAR},
+      BECOMMENTEE_ID = #{becommenteeId,jdbcType=VARCHAR},
+      COMMENTATOR_ID = #{commentatorId,jdbcType=VARCHAR},
+      LEVEL = #{level,jdbcType=CHAR},
+      IS_READ = #{isRead,jdbcType=CHAR},
+      CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+      UPDATED_TIME = #{updatedTime,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectDynamicByArticleIds" resultMap="BaseResultMap">
+    select u1.`NAME` as becommentee_name, u2.`NAME` as commentator_name,
+        c.ARTICLE_ID, c.CONTENT, c.TYPE, c.BECOMMENTEE_ID, c.COMMENTATOR_ID, c.LEVEL, c.TARGET_ID
+    from user_info u1
+    left join `comment` c on u1.id = c.BECOMMENTEE_ID
+    left join user_info u2 on c.COMMENTATOR_ID = u2.ID
+    where c.ID in
+    <foreach item="item" index="index" collection="articleIds" open="(" separator="," close=")">
+        #{item}
+    </foreach>
+  </select>
+
+  <delete id="deleteByArticleId" parameterType="java.lang.String">
+    delete from comment
+    where ARTICLE_ID = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <select id="countReadByUserNo" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select
+        count(1)
+    from comment
+    where
+        BECOMMENTEE_ID = #{userNo,jdbcType=VARCHAR} and IS_READ = '0'
+  </select>
+
+  <update id="readAll" parameterType="java.lang.String">
+    update
+        comment
+    set IS_READ = '1'
+    where
+        BECOMMENTEE_ID = #{userNo,jdbcType=VARCHAR} and IS_READ = '0'
+  </update>
+  <!-- 根据商品id查询 -->
+  <select id="selectByGoodsInfoId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+   select c.ID, u1.`NAME` as becommentee_name, u2.`NAME` as commentator_name, c.CREATED_TIME as time,
+        c.ID, c.ARTICLE_ID, c.CONTENT, c.TYPE, c.BECOMMENTEE_ID, c.COMMENTATOR_ID, c.LEVEL, c.IS_READ,
+        c.CREATED_TIME, c.UPDATED_TIME, u2.IMAGE_URL as commentator_avatar, c.TARGET_ID
+      from user_info u1
+      LEFT JOIN `comment` c on u1.USER_NO = c.BECOMMENTEE_ID
+      LEFT JOIN user_info u2 on c.COMMENTATOR_ID = u2.USER_NO
+    where c.ID is not null and c.ARTICLE_ID = #{goodsInfoId,jdbcType=VARCHAR}
+    order by c.CREATED_TIME ASC
+  </select>
+
+</mapper>

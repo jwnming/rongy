@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cd.dao.ArticleMapper" >
+  <resultMap id="BaseResultMap" type="com.cd.entity.Article" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="TYPE_NO" property="typeNo" jdbcType="VARCHAR" />
+    <result column="TITLE" property="title" jdbcType="VARCHAR" />
+    <result column="IMAGE_URL" property="imageUrl" jdbcType="VARCHAR" />
+    <result column="VIDEO_URL" property="videoUrl" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="CHAR" />
+    <result column="CREATED_BY" property="createdBy" jdbcType="VARCHAR" />
+    <result column="IS_HOT" property="isHot" jdbcType="CHAR" />
+    <result column="CREATED_TIME" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATED_TIME" property="updatedTime" jdbcType="TIMESTAMP" />
+    <result column="VIEW_COUNT" property="viewCount" jdbcType="INTEGER" />
+    <result column="IS_STICKY" property="isSticky" jdbcType="CHAR" />
+    <result column="IS_ANONYMOUS" property="isAnonymous" jdbcType="CHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.cd.entity.Article" extends="BaseResultMap" >
+    <result column="CONTENT" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapEX" type="com.cd.entity.ArticleEX" extends="ResultMapWithBLOBs">
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="SEX" property="sex" jdbcType="CHAR" />
+    <result column="IMAGE_URL" property="imageUrl" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, TYPE_NO, TITLE, IMAGE_URL, VIDEO_URL, STATUS, CREATED_BY, IS_HOT, CREATED_TIME,
+    UPDATED_TIME, VIEW_COUNT, IS_STICKY, IS_ANONYMOUS
+  </sql>
+  <sql id="Blob_Column_List" >
+    CONTENT
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from article
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <!-- 根据参数模糊匹配帖子内容 -->
+  <select id="selectByContentLike" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from article
+    where CONTENT like '%${contentLike,jdbcType=VARCHAR}%'
+  </select>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from article
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cd.entity.Article" >
+    insert into article (ID, TYPE_NO, TITLE,
+      IMAGE_URL, VIDEO_URL, STATUS, 
+      CREATED_BY, IS_HOT, CREATED_TIME, 
+      UPDATED_TIME, CONTENT, VIEW_COUNT)
+    values (#{id,jdbcType=INTEGER}, #{typeNo,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR},
+      #{imageUrl,jdbcType=VARCHAR}, #{videoUrl,jdbcType=VARCHAR}, #{status,jdbcType=CHAR}, 
+      #{createdBy,jdbcType=VARCHAR}, #{isHot,jdbcType=CHAR}, #{createdTime,jdbcType=TIMESTAMP}, 
+      #{updatedTime,jdbcType=TIMESTAMP}, #{content,jdbcType=LONGVARCHAR}, 0)
+  </insert>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.cd.entity.Article" >
+    insert into article
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="typeNo != null" >
+        TYPE_NO,
+      </if>
+      <if test="title != null" >
+        TITLE,
+      </if>
+      <if test="imageUrl != null" >
+        IMAGE_URL,
+      </if>
+      <if test="videoUrl != null" >
+        VIDEO_URL,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="createdBy != null" >
+        CREATED_BY,
+      </if>
+      <if test="isHot != null" >
+        IS_HOT,
+      </if>
+      <if test="createdTime != null" >
+        CREATED_TIME,
+      </if>
+      <if test="updatedTime != null" >
+        UPDATED_TIME,
+      </if>
+      <if test="content != null" >
+        CONTENT,
+      </if>
+      <if test="isAnonymous != null">
+        is_anonymous,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="typeNo != null" >
+        #{typeNo,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="videoUrl != null" >
+        #{videoUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=CHAR},
+      </if>
+      <if test="createdBy != null" >
+        #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="isHot != null" >
+        #{isHot,jdbcType=CHAR},
+      </if>
+      <if test="createdTime != null" >
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedTime != null" >
+        #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="isAnonymous != null">
+        #{isAnonymous,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cd.entity.Article" >
+    update article
+    <set >
+      <if test="typeNo != null" >
+        TYPE_NO = #{typeNo,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        TITLE = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        IMAGE_URL = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="videoUrl != null" >
+        VIDEO_URL = #{videoUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=CHAR},
+      </if>
+      <if test="createdBy != null" >
+        CREATED_BY = #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="isHot != null" >
+        IS_HOT = #{isHot,jdbcType=CHAR},
+      </if>
+      <if test="createdTime != null" >
+        CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedTime != null" >
+        UPDATED_TIME = #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="content != null" >
+        CONTENT = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.cd.entity.Article" >
+    update article
+    set TYPE_NO = #{typeNo,jdbcType=INTEGER},
+      TITLE = #{title,jdbcType=VARCHAR},
+      IMAGE_URL = #{imageUrl,jdbcType=VARCHAR},
+      VIDEO_URL = #{videoUrl,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=CHAR},
+      CREATED_BY = #{createdBy,jdbcType=VARCHAR},
+      IS_HOT = #{isHot,jdbcType=CHAR},
+      CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+      UPDATED_TIME = #{updatedTime,jdbcType=TIMESTAMP},
+      CONTENT = #{content,jdbcType=LONGVARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cd.entity.Article" >
+    update article
+    set TYPE_NO = #{typeNo,jdbcType=INTEGER},
+      TITLE = #{title,jdbcType=VARCHAR},
+      IMAGE_URL = #{imageUrl,jdbcType=VARCHAR},
+      VIDEO_URL = #{videoUrl,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=CHAR},
+      CREATED_BY = #{createdBy,jdbcType=VARCHAR},
+      IS_HOT = #{isHot,jdbcType=CHAR},
+      CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+      UPDATED_TIME = #{updatedTime,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectByTitle" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from article
+    where TITLE = #{title,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByQC" parameterType="com.cd.entity.dto.ArticleQueryCondition" resultMap="ResultMapEX">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from article
+    <where>
+      IS_STICKY = '0'
+      <if test="no!=null and no!=''">
+        AND TYPE_NO = #{no,jdbcType=VARCHAR}
+      </if>
+      <if test="tabbarType==1">
+        AND IS_HOT = '1'
+      </if>
+      <if test="tabbarType==2">
+        AND CREATED_BY in (
+            select USER_ID from user_relationship ur
+                where FOLLOWED_USER_ID = #{userNo,jdbcType=VARCHAR}
+        ) AND IS_ANONYMOUS = '0'
+      </if>
+    </where>
+    ORDER BY
+        CREATED_TIME DESC, ID DESC
+  </select>
+
+  <select id="selectByUserNo" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from article
+    where CREATED_BY = #{userNo,jdbcType=VARCHAR}
+    ORDER BY
+        CREATED_TIME DESC, ID DESC
+  </select>
+
+  <select id="listByUserLiked" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from article
+    where ID in (
+    select distinct ARTICLE_ID from comment where COMMENTATOR_ID = #{userNo,jdbcType=INTEGER} AND `TYPE` = '0'
+    )
+    ORDER BY
+        CREATED_TIME DESC, ID DESC
+  </select>
+
+  <select id="countByUserNo" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select
+        count(1)
+    from article
+    where CREATED_BY = #{userNo,jdbcType=VARCHAR}
+  </select>
+
+  <select id="countByOtherUserNo" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select
+        count(1)
+    from article
+    where CREATED_BY = #{userNo,jdbcType=VARCHAR} and IS_ANONYMOUS = '0'
+  </select>
+
+
+  <!-- 帖子的访问量+1 -->
+  <update id="viewCountAdd" parameterType="java.lang.Integer" >
+    update article
+    set VIEW_COUNT = VIEW_COUNT + 1
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectStickyArticlesByType" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from article
+    where
+    IS_STICKY = '1'
+    <if test="typeNo!=null and typeNo!=''">
+      AND TYPE_NO = #{typeNo,jdbcType=VARCHAR}
+    </if>
+  </select>
+
+  <!-- 查询排行榜 -->
+  <select id="selectAritclesAndUserNoList" resultType="com.cd.entity.RankingList">
+      <!--select count(*) as articleCount, CREATED_BY as userNo
+      from article where IS_ANONYMOUS='0' GROUP BY CREATED_BY ORDER BY count(*) DESC-->
+    select count(*) as articleCount, t.CREATED_BY as userNo
+    from
+      (select a.id, a.created_by from article as a where a.IS_ANONYMOUS='0'
+        union all
+       select b.id, b.created_by from market_goods_info as b )t
+    GROUP BY t.CREATED_BY ORDER BY count(*) DESC
+  </select>
+    <!-- 根据用户id查询发帖数量 -->
+    <select id="selectAritclesAndUserNoListByUserNo" parameterType="java.lang.String" resultType="com.cd.entity.RankingList">
+      <!--select count(*) as articleCount, CREATED_BY as userNo
+      from article where CREATED_BY = #{userNo,jdbcType=VARCHAR} and IS_ANONYMOUS='0' GROUP BY CREATED_BY-->
+      select count(*) as articleCount, t.CREATED_BY as userNo
+      from
+        (select a.id, a.created_by from article as a where a.IS_ANONYMOUS='0'
+        union all
+        select b.id, b.created_by from market_goods_info as b )t
+      where t.created_by = #{userNo,jdbcType=VARCHAR} GROUP BY t.CREATED_BY
+  </select>
+
+    <select id="selectByTopciId" parameterType="com.cd.entity.dto.ArticleQueryCondition" resultMap="ResultMapEX">
+        select
+            c.ID, c.TYPE_NO, c.TITLE, c.IMAGE_URL, c.VIDEO_URL, c.STATUS, c.CREATED_BY, c.IS_HOT, c.CREATED_TIME,
+            c.UPDATED_TIME, c.VIEW_COUNT, c.IS_STICKY, c.IS_ANONYMOUS, c.CONTENT
+
+        from topic_article_rel a
+        LEFT JOIN topic_cls b on b.id = a.topic_cls_id
+        left JOIN article c on a.info_id = c.id
+
+        where a.topic_cls_id = #{topicId}
+
+
+        ORDER BY
+       c.CREATED_TIME DESC, c.ID DESC
+    </select>
+
+</mapper>

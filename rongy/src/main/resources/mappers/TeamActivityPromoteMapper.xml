@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cd.dao.TeamActivityPromoteMapper" >
+  <resultMap id="BaseResultMap" type="com.cd.entity.TeamActivityPromote" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="TEAM_TYPE_NO" property="teamTypeNo" jdbcType="CHAR" />
+    <result column="ACTIVITY_NAME" property="activityName" jdbcType="VARCHAR" />
+    <result column="ACTIVITY_TIME" property="activityTime" jdbcType="VARCHAR" />
+    <result column="SIGN_END_TIME" property="signEndTime" jdbcType="VARCHAR" />
+    <result column="ACTIVITY_ADDRESS" property="activityAddress" jdbcType="VARCHAR" />
+    <result column="MAX_PERSONS" property="maxPersons" jdbcType="INTEGER" />
+    <result column="DES_CONTENT" property="desContent" jdbcType="VARCHAR" />
+    <result column="IMAGE_URL" property="imageUrl" jdbcType="VARCHAR" />
+    <result column="VADIO_URL" property="vadioUrl" jdbcType="VARCHAR" />
+    <result column="SIGN_URL" property="signUrl" jdbcType="VARCHAR" />
+    <result column="VIEW_COUNT" property="viewCount" jdbcType="INTEGER" />
+    <result column="PRESENT_NUM" property="presentNum" jdbcType="INTEGER" />
+    <result column="ACTIVITY_STATUS" property="activityStatus" jdbcType="CHAR" />
+    <result column="IS_STICKY" property="isSticky" jdbcType="CHAR" />
+    <result column="CREATE_BY" property="createBy" jdbcType="VARCHAR" />
+    <result column="CREATED_TIME" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATED_TIME" property="updatedTime" jdbcType="TIMESTAMP" />
+    <result column="DELETE_FLAG" property="deleteFlag" jdbcType="CHAR" />
+    <result column="LONGITUDE" property="longitude" jdbcType="VARCHAR" />
+    <result column="LATITUDE" property="latitude" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, TEAM_TYPE_NO, ACTIVITY_NAME, ACTIVITY_TIME, ACTIVITY_ADDRESS, MAX_PERSONS, DES_CONTENT, 
+    IMAGE_URL, VADIO_URL, SIGN_URL, VIEW_COUNT, PRESENT_NUM, ACTIVITY_STATUS, IS_STICKY, CREATE_BY,
+    CREATED_TIME, UPDATED_TIME, DELETE_FLAG, LONGITUDE, LATITUDE, SIGN_END_TIME
+  </sql>
+  <sql id="Base_Column_List1" >
+    a.ID, a.TEAM_TYPE_NO, a.ACTIVITY_NAME, a.ACTIVITY_TIME, a.ACTIVITY_ADDRESS, a.MAX_PERSONS, a.DES_CONTENT,
+    a.IMAGE_URL, a.VADIO_URL, a.VIEW_COUNT, a.PRESENT_NUM, a.ACTIVITY_STATUS, a.IS_STICKY, a.CREATE_BY,
+    a.CREATED_TIME, a.UPDATED_TIME, a.DELETE_FLAG, a.LONGITUDE, a.LATITUDE, a.SIGN_END_TIME
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from team_activity_promote
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByUserInfo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List1" />
+    from team_activity_promote a
+    left join team_activity_rel_user_info b on a.ID = b.TEAM_ACTIVITY_ID
+    left join user_info c on b.USER_INFO_ID = c.ID
+    where c.USER_NO = #{userNo,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByDoingStatus" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from team_activity_promote
+    where ACTIVITY_STATUS = '0'
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from team_activity_promote
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cd.entity.TeamActivityPromote" >
+    insert into team_activity_promote (ID, TEAM_TYPE_NO, ACTIVITY_NAME, 
+      ACTIVITY_TIME, SIGN_END_TIME, ACTIVITY_ADDRESS, MAX_PERSONS,
+      DES_CONTENT, IMAGE_URL, VADIO_URL, SIGN_URL,
+      VIEW_COUNT, PRESENT_NUM, ACTIVITY_STATUS, 
+      IS_STICKY, CREATE_BY, CREATED_TIME, 
+      UPDATED_TIME, DELETE_FLAG)
+    values (#{id,jdbcType=INTEGER}, #{teamTypeNo,jdbcType=CHAR}, #{activityName,jdbcType=VARCHAR}, 
+      #{activityTime,jdbcType=VARCHAR}, #{signEndTime,jdbcType=VARCHAR}, #{activityAddress,jdbcType=VARCHAR}, #{maxPersons,jdbcType=INTEGER},
+      #{desContent,jdbcType=VARCHAR}, #{imageUrl,jdbcType=VARCHAR}, #{vadioUrl,jdbcType=VARCHAR}, #{signUrl,jdbcType=VARCHAR},
+      #{viewCount,jdbcType=INTEGER}, #{presentNum,jdbcType=INTEGER}, #{activityStatus,jdbcType=CHAR}, 
+      #{isSticky,jdbcType=CHAR}, #{createBy,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, 
+      #{updatedTime,jdbcType=TIMESTAMP}, #{deleteFlag,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cd.entity.TeamActivityPromote" >
+    insert into team_activity_promote
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="teamTypeNo != null" >
+        TEAM_TYPE_NO,
+      </if>
+      <if test="activityName != null" >
+        ACTIVITY_NAME,
+      </if>
+      <if test="activityTime != null" >
+        ACTIVITY_TIME,
+      </if>
+      <if test="signEndTime != null" >
+        SIGN_END_TIME,
+      </if>
+      <if test="activityAddress != null" >
+        ACTIVITY_ADDRESS,
+      </if>
+      <if test="maxPersons != null" >
+        MAX_PERSONS,
+      </if>
+      <if test="desContent != null" >
+        DES_CONTENT,
+      </if>
+      <if test="imageUrl != null" >
+        IMAGE_URL,
+      </if>
+      <if test="vadioUrl != null" >
+        VADIO_URL,
+      </if>
+      <if test="signUrl != null" >
+        SIGN_URL,
+      </if>
+      <if test="viewCount != null" >
+        VIEW_COUNT,
+      </if>
+      <if test="presentNum != null" >
+        PRESENT_NUM,
+      </if>
+      <if test="activityStatus != null" >
+        ACTIVITY_STATUS,
+      </if>
+      <if test="isSticky != null" >
+        IS_STICKY,
+      </if>
+      <if test="createBy != null" >
+        CREATE_BY,
+      </if>
+      <if test="createdTime != null" >
+        CREATED_TIME,
+      </if>
+      <if test="updatedTime != null" >
+        UPDATED_TIME,
+      </if>
+      <if test="deleteFlag != null" >
+        DELETE_FLAG,
+      </if>
+      <if test="longitude != null" >
+        LONGITUDE,
+      </if>
+      <if test="latitude != null" >
+        LATITUDE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="teamTypeNo != null" >
+        #{teamTypeNo,jdbcType=CHAR},
+      </if>
+      <if test="activityName != null" >
+        #{activityName,jdbcType=VARCHAR},
+      </if>
+      <if test="activityTime != null" >
+        #{activityTime,jdbcType=VARCHAR},
+      </if>
+      <if test="signEndTime != null" >
+        #{signEndTime,jdbcType=VARCHAR},
+      </if>
+      <if test="activityAddress != null" >
+        #{activityAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="maxPersons != null" >
+        #{maxPersons,jdbcType=INTEGER},
+      </if>
+      <if test="desContent != null" >
+        #{desContent,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="vadioUrl != null" >
+        #{vadioUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="signUrl != null" >
+        #{signUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="viewCount != null" >
+        #{viewCount,jdbcType=INTEGER},
+      </if>
+      <if test="presentNum != null" >
+        #{presentNum,jdbcType=INTEGER},
+      </if>
+      <if test="activityStatus != null" >
+        #{activityStatus,jdbcType=CHAR},
+      </if>
+      <if test="isSticky != null" >
+        #{isSticky,jdbcType=CHAR},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null" >
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedTime != null" >
+        #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=CHAR},
+      </if>
+      <if test="longitude != null" >
+        #{longitude,jdbcType=VARCHAR},
+      </if>
+      <if test="latitude != null" >
+        #{latitude,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cd.entity.TeamActivityPromote" >
+    update team_activity_promote
+    <set >
+      <if test="teamTypeNo != null" >
+        TEAM_TYPE_NO = #{teamTypeNo,jdbcType=CHAR},
+      </if>
+      <if test="activityName != null" >
+        ACTIVITY_NAME = #{activityName,jdbcType=VARCHAR},
+      </if>
+      <if test="activityTime != null" >
+        ACTIVITY_TIME = #{activityTime,jdbcType=VARCHAR},
+      </if>
+      <if test="signEndTime != null" >
+        SIGN_END_TIME = #{signEndTime,jdbcType=VARCHAR},
+      </if>
+      <if test="activityAddress != null" >
+        ACTIVITY_ADDRESS = #{activityAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="maxPersons != null" >
+        MAX_PERSONS = #{maxPersons,jdbcType=INTEGER},
+      </if>
+      <if test="desContent != null" >
+        DES_CONTENT = #{desContent,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        IMAGE_URL = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="vadioUrl != null" >
+        VADIO_URL = #{vadioUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="viewCount != null" >
+        VIEW_COUNT = #{viewCount,jdbcType=INTEGER},
+      </if>
+      <if test="presentNum != null" >
+        PRESENT_NUM = #{presentNum,jdbcType=INTEGER},
+      </if>
+      <if test="activityStatus != null" >
+        ACTIVITY_STATUS = #{activityStatus,jdbcType=CHAR},
+      </if>
+      <if test="isSticky != null" >
+        IS_STICKY = #{isSticky,jdbcType=CHAR},
+      </if>
+      <if test="createBy != null" >
+        CREATE_BY = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null" >
+        CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedTime != null" >
+        UPDATED_TIME = #{updatedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteFlag != null" >
+        DELETE_FLAG = #{deleteFlag,jdbcType=CHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cd.entity.TeamActivityPromote" >
+    update team_activity_promote
+    set TEAM_TYPE_NO = #{teamTypeNo,jdbcType=CHAR},
+      ACTIVITY_NAME = #{activityName,jdbcType=VARCHAR},
+      ACTIVITY_TIME = #{activityTime,jdbcType=VARCHAR},
+      SIGN_END_TIME = #{signEndTime,jdbcType=VARCHAR},
+      ACTIVITY_ADDRESS = #{activityAddress,jdbcType=VARCHAR},
+      MAX_PERSONS = #{maxPersons,jdbcType=INTEGER},
+      DES_CONTENT = #{desContent,jdbcType=VARCHAR},
+      IMAGE_URL = #{imageUrl,jdbcType=VARCHAR},
+      VADIO_URL = #{vadioUrl,jdbcType=VARCHAR},
+      VIEW_COUNT = #{viewCount,jdbcType=INTEGER},
+      PRESENT_NUM = #{presentNum,jdbcType=INTEGER},
+      ACTIVITY_STATUS = #{activityStatus,jdbcType=CHAR},
+      IS_STICKY = #{isSticky,jdbcType=CHAR},
+      CREATE_BY = #{createBy,jdbcType=VARCHAR},
+      CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+      UPDATED_TIME = #{updatedTime,jdbcType=TIMESTAMP},
+      DELETE_FLAG = #{deleteFlag,jdbcType=CHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectUnderwayByTypeNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from team_activity_promote
+    where TEAM_TYPE_NO = #{typeNo,jdbcType=VARCHAR}
+      and ACTIVITY_STATUS = '0'
+      order by ACTIVITY_TIME
+  </select>
+  <select id="selectFinishedByTypeNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from team_activity_promote
+    where TEAM_TYPE_NO = #{typeNo,jdbcType=VARCHAR}
+    and ACTIVITY_STATUS = '1'
+    order by ACTIVITY_TIME
+  </select>
+
+  <select id="count" resultType="Integer" parameterType="java.lang.String" >
+    select
+    count(*)
+    from team_activity_promote
+    <if test="typeNo != null" >
+      where TEAM_TYPE_NO = #{typeNo,jdbcType=VARCHAR}
+    </if>
+
+  </select>
+</mapper>
